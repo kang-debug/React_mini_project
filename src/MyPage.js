@@ -9,9 +9,18 @@ function MyPage() {
     // const movePage = useNavigate();
     const url = 'http://localhost:5050';
     let [board, setBoard] = useState([]);
+    let [countBoard, setCountBoard] = useState([]);
+    var today = new Date();
+
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+
+    var dateString = year + '-' + month  + '-' + day;
     useEffect( ()=>{
         const member = {
-            id : sessionStorage.getItem('USERID')
+            id : sessionStorage.getItem('USERID'),
+            date : dateString
         }
         axios({
             method: 'post',
@@ -25,7 +34,38 @@ function MyPage() {
             .catch(() => {
                 alert('데이터를 불러오는데 실패하였습니다. 나중에 다시 시도해주세요.');
             })
+        axios({
+            method: 'post',
+            header: { 'Content-Type': 'application/json; charset=UTF-8' },
+            url: url + "/userBoardCount",
+            data : member
+        })
+            .then(response => {
+                setCountBoard(response.data.result);
+            })
+            .catch(() => {
+                alert('데이터를 불러오는데 실패하였습니다. 나중에 다시 시도해주세요.');
+            })
     }, []);
+
+    function userBoardCount() {
+        const member = {
+            id : sessionStorage.getItem('USERID'),
+            date : dateString
+        }
+        axios({
+            method: 'post',
+            header: { 'Content-Type': 'application/json; charset=UTF-8' },
+            url: url + "/userBoardCount",
+            data : member
+        })
+            .then(response => {
+                setCountBoard(response.data.result);
+            })
+            .catch(() => {
+                alert('데이터를 불러오는데 실패하였습니다. 나중에 다시 시도해주세요.');
+            })
+    }
 
     function getBoard() {
         const member = {
@@ -57,11 +97,13 @@ function MyPage() {
                 if(response.data.result == 200) {
                     alert(response.data.message);
                     getBoard();
+                    userBoardCount();
                 }
             })
             .catch(() => {
                 // alert('데이터를 불러오는데 실패하였습니다. 나중에 다시 시도해주세요.');
             })
+            
     }
     return (
         <>
@@ -82,18 +124,18 @@ function MyPage() {
                             </div>
                             <div className="stats">
                                 <p className="flex flex-col">
-                                    {/* 오늘 작성한 게시글 수
+                                    오늘 작성한 게시글 수
                                     <span className="state-value">
-                                        34
-                                    </span> */}
-                                    구현 예정
+                                        {countBoard}
+                                    </span>
+                                    {/* 구현 예정 */}
                                 </p>
-                                {/* <p className="flex">
+                                <p className="flex">
                                     총 게시글 수
                                     <span className="state-value">
-                                        455
+                                        {board.length}
                                     </span>
-                                </p> */}
+                                </p>
 
                             </div>
                         </div>

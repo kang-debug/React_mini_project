@@ -18,23 +18,27 @@ function Top() {
     }
 
     const logout = () => {
-        const info = {
-            id: sessionStorage.getItem('USERID'),
-            nickname: sessionStorage.getItem('NICKNAME')
-        }
-        axios({
-            method: 'post',
-            header: { 'Content-Type': 'application/json; charset=UTF-8' },
-            url: url + "/logout",
-            data : info
-        })
-            .then(() => {
-                
+        if(sessionStorage.getItem('USERID')) {
+            const info = {
+                id: sessionStorage.getItem('USERID'),
+                nickname: sessionStorage.getItem('NICKNAME')
+            }
+            axios({
+                method: 'post',
+                header: { 'Content-Type': 'application/json; charset=UTF-8' },
+                url: url + "/logout",
+                data : info
             })
-        alert('로그아웃을 완료했습니다.');
-        sessionStorage.removeItem('USERID');
-        sessionStorage.removeItem('NICKNAME');
-        movePage('/');
+                .then(() => {
+                    
+                })
+            alert('로그아웃을 완료했습니다.');
+            sessionStorage.removeItem('USERID');
+            sessionStorage.removeItem('NICKNAME');
+            movePage('/');
+        } else {
+            movePage('/');
+        }
     }
 
     return (
